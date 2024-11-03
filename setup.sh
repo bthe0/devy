@@ -32,7 +32,6 @@ cat > ~/Library/Application\ Support/Code/User/settings.json << 'EOL'
     "explorer.excludeGitIgnore": false,
     "explorer.autoReveal": true,
     "explorer.compactFolders": false,
-    
     "files.exclude": {
         "**/.git": false,
         "**/.svn": false,
@@ -84,47 +83,19 @@ defaults write com.apple.LaunchServices/com.apple.launchservices.secure LSHandle
 defaults write com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers -array-add '{LSHandlerContentType=public.source-code;LSHandlerRoleAll=com.microsoft.VSCode;}'
 
 # Common development file extensions
-declare -a extensions=(
-    # Basic text files
-    "txt" "text" "rtf" "json" "csv" "log"
-    
-    # Web development
-    "html" "htm" "css" "js" "jsx" "ts" "tsx" "json" "xml" "svg"
-    "vue" "svelte" "php" "asp" "aspx" "jsp"
-    
-    # Config files
-    "env" "gitignore" "yml" "yaml" "toml" "conf" "config" "ini"
-    "properties" "prefs" "htaccess" "lock" "npmrc" "nvmrc"
-    
-    # Documentation
-    "md" "markdown" "rst" "asciidoc" "adoc" "textile"
-    
-    # Programming languages
-    "py" "java" "cpp" "c" "hpp" "h" "cs" "php" "rb" "go" "rs" "swift"
-    "scala" "pl" "pm" "r" "rake" "coffee" "elm" "ex" "exs"
-    
-    # Shell scripts
-    "sh" "bash" "zsh" "fish" "command" "bat" "cmd"
-    
-    # Development configs
-    "eslintrc" "prettierrc" "babelrc" "editorconfig"
-    "dockerignore" "nginx" "prisma" "graphql"
-    "stylelintrc" "prettierignore" "eslintignore"
-    
-    # Data formats
-    "xml" "xsl" "xslt" "dtd" "sql" "plist"
-)
+VSCODE_ID="com.microsoft.VSCode"
+declare -a extensions=("txt" "text" "rtf" "json" "csv" "log" "html" "htm" "css" "js" "jsx" "ts" "tsx" "json" "xml" "svg" "vue" "svelte" "php" "asp" "aspx" "jsp" "env" "gitignore" "yml" "yaml" "toml" "conf" "config" "ini" "properties" "prefs" "htaccess" "lock" "npmrc" "nvmrc" "md" "markdown" "rst" "asciidoc" "adoc" "textile" "py" "java" "cpp" "c" "hpp" "h" "cs" "php" "rb" "go" "rs" "swift" "scala" "pl" "pm" "r" "rake" "coffee" "elm" "ex" "exs" "sh" "bash" "zsh" "fish" "command" "bat" "cmd" "eslintrc" "prettierrc" "babelrc" "editorconfig" "dockerignore" "nginx" "prisma" "graphql" "stylelintrc" "prettierignore" "eslintignore" "xml" "xsl" "xslt" "dtd" "sql" "plist")
 
 for ext in "${extensions[@]}"; do
-    # Set VS Code as default for the extension
-    duti -s $VSCODE_ID .$ext all 2>/dev/null
-    
-    # Verify the change
-    current_handler=$(duti -x .$ext 2>/dev/null)
-    if [[ $current_handler == *"Visual Studio Code"* ]]; then
-        echo "✓ .$ext → VS Code"
+    if [[ "$ext" != .* ]]; then
+        ext=".$ext"
+    fi
+    duti -s "$VSCODE_ID" "$ext" all 2>/dev/null
+    current_handler=$(duti -x "$ext" 2>/dev/null)
+    if [[ $current_handler == *"Visual Studio Code"* ]] || [[ $current_handler == *"$VSCODE_ID"* ]]; then
+        echo "✓ $ext → VS Code"
     else
-        echo "⚠️  Failed to set VS Code as default for .$ext"
+        echo "⚠️  Failed to set VS Code as default for $ext"
     fi
 done
 
